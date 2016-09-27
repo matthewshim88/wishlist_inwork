@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    {% load staticfiles %}
+    <link rel='stylesheet' href="{%static 'djangoDemo/css/bootstrap.min.css' %}" media="screen" title="bootstrap" charset="utf-8">
+  </head>
+  <body>
+    <h2>Welcome {{ this_user.first_name }}</h2>
+    <a href="{% url 'wishlist:newForm' %}" class='btn btn-default'>Add Item</a>
+    {% for message in messages %}
+      <h4 class='alert alert-{{message.tags}}'>{{message}}</h4>
+    {% endfor %}
+    <div class='container bg-info'>
+      <h3>Your Wish List: </h3>
+        <table class='table table-bordered table-hover'>
+          <thead>
+            <tr>
+              <th>Item: </th>
+              <th>Added by:</th>
+              <th>Date Added:</th>
+              <th>Action: </th>
+            </tr>
+          </thead>
+          {% for item in all_items %}
+          <tr>
+            <td><a href="{% url 'wishlist:show' id=item.id %}">{{ item.item_name }}</a></td>
+            <td>{{ item.user_created.first_name }}</td>
+            <td>{{ item.created_at.date }}</td>
+            <td>
+              {% if item.user_created.id == this_user %}
+                <form action="{% url 'wishlist:delete' id=item.id %}" method='POST'>
+                  {% csrf_token %}
+                  <input type='submit' value ='Delete'>
+                </form>
+              {% else %}
+                <form action="{% url 'wishlist:remove' id=item.id%}" method='POST'>
+                  {% csrf_token %}
+                  <input type='submit' value ='Remove from Wishlist'>
+                </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+    </div>
+    <div class='container bg-info'>
+      <h3>Other Users' Wish List</h3>
+      <table class='table table-bordered table-hover'>
+        <thead>
+          <tr>
+            <th>Item: </th>
+            <th>Added by:</th>
+            <th>Date Added:</th>
+            <th>Action: </th>
+          </tr>
+        </thead>
+        {% for item in other_items %}
+          <tr>
+            <td><a href="{% url 'wishlist:show' id=item.id%}">{{ item.item_name }}</a></td>
+            <td> {{ item.user_created.first_name}}</td>
+            <td> {{ item.created_at.date }}</td>
+            <td>
+              <form action="{% url 'wishlist:add_to_wishlist' %}" method='POST'>
+                {% csrf_token %}
+                <input type='hidden' name='item_name' value="{{item.item_name}}">
+                <input type='submit' value='Add to my Wishlist'>
+              </form>
+            </td>
+        {% endfor %}
+      </table>
+    </div>
+    <a href="{%url 'wishlist:logOut'%}" class="btn btn-default">Log Out</a>
+  </body>
+</html>

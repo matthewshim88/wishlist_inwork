@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    {% load staticfiles %}
+    <link rel='stylesheet' href="{%static 'djangoDemo/css/bootstrap.min.css' %}" media="screen" title="bootstrap" charset="utf-8">
+  </head>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Create a New Wish List Item</h2>
+      <div id='productBox'>
+        <form action="{% url 'wishlist:addItem' %}" method='POST'>
+            {% csrf_token %}
+            <p>Item/Product: <input type="text" name='name' class='form-control col-md-6'></p>
+            <input type='submit' value='Create' class="btn btn-default">
+        </form>
+        <a href="{% url 'wishlist:index' %}" class="btn btn-default">Home</a>
+        <a href="{%url 'wishlist:logOut'%}" class="btn btn-default">Log Out</a>
+      </div>
+    </div>
+  </body>
+</html>
